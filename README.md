@@ -37,3 +37,12 @@ Create a [virtual environment](https://docs.python.org/3/library/venv.html) and 
 ```
 pip install -r requirements.txt
 ```
+
+### Details
+
+1. Run the vanilla version of CLAM
+   ```
+   python main_vanilla_CLAM.py --drop_out --early_stopping --lr 2e-4 --k 10 --label_frac 1.0 --exp_code task_2_tumor_subtyping_CLAM_50 --weighted_sample --bag_loss ce --inst_loss svm --task task_2_tumor_subtyping --model_type clam_mb --log_data --data_root_dir <base-data-dir>
+   ```
+
+2. Generate heatmaps from CLAM repository [create_heatmaps.py](https://github.com/mahmoodlab/CLAM/blob/master/create_heatmaps.py)
