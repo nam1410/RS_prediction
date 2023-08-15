@@ -1,0 +1,701 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>{{ slide_filename }}</title>
+
+<style type="text/css">
+html {
+    overflow: hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+}
+div#view {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    color: white;
+}
+
+div#viewslide {
+   position: absolute;
+    color: yellow;
+    left: 50px;
+  top: 500px;
+    font-size:1.5em;
+}
+
+div#viewslide_rev {
+   position: absolute;
+    color: yellow;
+    left: 200px;
+  top: 500px;
+    font-size:1.5em;
+}
+
+div#timer{
+position: absolute;
+color: yellow;
+  top: 850px;
+left:75px;
+  font-size:1.5em;
+}
+
+button#button {
+  position: absolute;
+  left: 50px;
+  top: 50px;
+}
+
+button#button1 {
+  position: absolute;
+  left: 50px;
+  top: 100px;
+}
+
+button#button2 {
+  position: absolute;
+  left: 50px;
+  top: 200px;
+}
+
+button#button3 {
+  position: absolute;
+  left: 50px;
+  top: 150px;
+}
+
+button#button5 {
+  position: absolute;
+  left: 50px;
+  top: 250px;
+}
+
+button#geoJump {
+  position: absolute;
+  left: 50px;
+  top: 300px;
+}
+
+button#flip {
+  position: absolute;
+  left: 150px;
+  top: 350px;
+}
+
+button#flip_orig {
+  position: absolute;
+  left: 50px;
+  top: 350px;
+}
+
+
+button#button-start {
+  position: absolute;
+  left: 50px;
+  top: 900px;
+}
+
+button#button-stop {
+  position: absolute;
+  left: 50px;
+  top: 950px;
+}
+
+button#button-reset {
+  position: absolute;
+  left: 50px;
+  top: 1000px;
+}
+
+
+button#remove-overlay-btn {
+  position: absolute;
+  left: 50px;
+  top: 650px;
+}
+
+button#add-overlay-btn {
+  position: absolute;
+  left: 50px;
+  top: 700px;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+button#clear-overlay-btn {
+  position: absolute;
+  left: 50px;
+  top: 750px;
+}
+
+button#back-btn {
+  position: absolute;
+  left: 50px;
+  top: 800px;
+}
+
+
+.range input {
+margin-top:10%;
+-webkit-transform:rotate(90deg);
+-moz-transform:rotate(90deg);
+-o-transform:rotate(90deg);
+transform:rotate(270deg);
+}
+
+
+
+button{
+@include corners (5px);
+background:white;
+color:black;
+cursor:pointer;
+font-size:1.2em;
+}
+
+button:hover {background-color: yellow;}
+button:focus {background-color:green; }
+button:active {background-color:green; }
+
+
+.popup {
+  position: fixed;
+  top: 200px;
+  left: 400px;
+  right: 50px;
+  width: 55%;
+  height: 70%;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: top;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  font-size: 20px;
+font-weight: bold;
+  border-radius: 10px;
+  text-align: top;
+}
+
+.popup-close {
+  position: absolute;
+  top: 0px;
+  right: 50px;
+  transition: all 200ms;
+  cursor: pointer;
+  color:brown;
+  font-size: 70px;
+  font-weight: bold;
+  text-decoration: none;
+  background:white;
+}
+
+.popup-close:hover {
+  color: #06D85F;
+}
+
+/* Hide the popup by default */
+.popup {
+  display: none;
+}
+
+
+</style>
+
+<div id="view"></div>
+
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='openseadragon.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='openseadragon-scalebar.js') }}"></script>
+<script type="text/javascript" src="static/openseadragon-annotations/dist/openseadragon-annotations.js"></script>
+
+
+<script src="//cdn.rawgit.com/altert/OpenseadragonFabricjsOverlay/master/fabric/fabric.adapted.js"></script>
+<script src="//cdn.rawgit.com/altert/OpenseadragonFabricjsOverlay/master/openseadragon-fabricjs-overlay.js"></script>
+  
+<button id="button">Disagree -2</button>
+<button id="button1">Disagree -1</button>
+<button id="button3">Neutral 0</button>
+<button id="button2">Disagree +1</button>
+<button id="button5">Disagree +2</button>
+<button id="geoJump">Export CSV</button>
+<button id="flip">Flip</button>
+<button id="flip_orig">Original</button>
+
+<div id="viewslide" class="range">
+<input type="range" value="0" min="0" max="100" oninput="rangeValue.innerText = this.value"> <! -- GilbertBigras Change the original value of viewslide to 0 -->
+<p id="rangeValue">0</p>
+</div>
+
+<div id="viewslide_rev" class="range">
+<input type="range" value="100" min="0" max="100" oninput="rangeValue_rev.innerText = this.value">
+<p id="rangeValue_rev">100</p>
+</div> 
+
+<div id = "timer" class="wrapper">
+
+
+<p><span id="seconds">00</span>:<span id="tens">00</span></p>
+</div> 
+
+<div id="popup" class="popup">
+  <div class="popup-content">
+    <span class="popup-close">&times;</span>
+    <p>Instructions
+    <ol>
+  <li>Navigation - Scroll the mouse wheel for zooming in and out. If using a trackpad, swipe up with two fingers to zoom in and down to zoom out. NOTE: this subjective to the machine you're using.</li><br/>
+  <li>Annotate the regions based on the Disagreement bins based on the heatmap on the whole slide-image (WSI). Click on the button according to the desired range of disagreement and hold the mouse and draw a bounding box</li><br/>
+  <li>Clear All Overlays- You can choose to clear all the annotations for the WSI.</li><br/>
+  <li>Remove session overlays- You can choose to remove all the session overlays one-by one. NOTE: This does not delete the existing overlays in your internal storage (as .csv)</li><br/>
+  <li>Load annotations- You can choose to load overlays from previous sessions that are stored in your internal storage (as .csv)</li><br/>
+  <li>Export CSV- You can save all the annotations of this WSI for the current session.</li><br/>
+  <li>[IMPORTANT] Start the stopwatch when you close this pop-up and stop it just before you export the annotations.</li><br/>
+  <li>[IMPORTANT] Once you click on "Go back", all your session overlays will be lost if not saved.</li><br/>
+  <li>For more queries,  <a href="https://github.com/nam1410/RS_prediction/issues">click here</a></li><br/>
+</ol>
+    </p>
+  </div>
+</div>
+
+
+<button id="back-btn" onclick="history.back()">Go Back</button>
+
+
+
+    <button id="remove-overlay-btn">Remove session Overlays</button>
+    <button id="add-overlay-btn">Load existing Overlays</button>
+    <button id="clear-overlay-btn">Clear All Overlays</button>
+
+<button id="button-start">Resume</button>
+<button id="button-stop">Stop</button>
+<button id="button-reset">Reset</button>
+
+<script type="text/javascript">
+
+var time=0;
+var seconds = 0; 
+var tens = 0; 
+var appendTens = document.getElementById("tens")
+var appendSeconds = document.getElementById("seconds")
+var Interval ;
+
+function startTimer () {
+    tens++; 
+    
+    if(tens <= 9){
+      appendTens.innerHTML = "0" + tens;
+    }
+    
+    if (tens > 9){
+      appendTens.innerHTML = tens;
+      
+    } 
+    
+    if (tens > 99) {
+      console.log("seconds");
+      seconds++;
+      appendSeconds.innerHTML = "0" + seconds;
+      tens = 0;
+      appendTens.innerHTML = "0" + 0;
+    }
+    
+    if (seconds > 9){
+      appendSeconds.innerHTML = seconds;
+    }
+  time =  seconds;
+  }
+
+
+document.getElementById("popup").style.display = "flex";
+
+// Close the popup
+var close = document.getElementsByClassName("popup-close")[0];
+close.onclick = function() {
+  document.getElementById("popup").style.display = "none";
+  clearInterval(Interval);
+  Interval = setInterval(startTimer, 10);
+}
+
+
+
+$(function() {
+var x_box;
+var y_box;
+var h_box;
+var w_box;
+var flip_status = 0;
+var drag;
+var arr = [['flip','mode','rect_id','time_taken','x','y','width','height','actual_x','actual_y','actual_width','actual_height']];
+var selectionMode = false;
+var mode;
+var previous_time = 0;
+var overlay_list = [];
+var overlay_element = [];
+var popped;
+var popped_list;
+var actual_location;
+var actual_location_arr = [];
+var actual_popped;
+var removed_arr = [['flip','mode','rect_id','time_taken','x','y','width','height','actual_x','actual_y','actual_width','actual_height']];
+const slider = document.getElementById("viewslide");
+const sliderValue = document.getElementById("rangeValue");
+const slider_rev = document.getElementById("viewslide_rev");
+const sliderValue_rev = document.getElementById("rangeValue_rev");
+
+
+if({{ meta_arr }} != 0){
+      new_array = {{ meta_arr }}
+      for (var i = 0; i < new_array.length; i++) { arr.push(new_array[i]);}
+      previous_time = new_array[new_array.length-1][2]
+      }
+
+    var viewer = new OpenSeadragon({
+        id: "view",
+        tileSources: "{{ slide_url }}",
+        prefixUrl: "{{ url_for('static', filename='images/') }}",
+        showNavigator: true,
+        showRotationControl: true,
+        animationTime: 0.5,
+        blendTime: 0.1,
+        constrainDuringPan: true,
+        maxZoomPixelRatio: 1,
+        minZoomImageRatio: 1,
+        visibilityRatio: 1,
+        zoomPerScroll: 2,
+        timeout: 120000
+    });
+    
+    
+    var mpp = parseFloat("{{ slide_mpp }}");
+    viewer.scalebar({
+        pixelsPerMeter: mpp ? (1e6 / mpp) : 0,
+        xOffset: 10,
+        yOffset: 10,
+        barThickness: 3,
+        color: '#555555',
+        fontColor: '#333333',
+        backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    });
+    
+
+mediaDiv = document.createElement("div")
+mediaDiv.style.position = "absolute"
+mediaDiv.style.pointerEvents = "none"
+viewer.canvas.appendChild(mediaDiv)
+
+mediaDiv_rev = document.createElement("div")
+mediaDiv_rev.style.position = "absolute"
+mediaDiv_rev.style.pointerEvents = "none"
+viewer.canvas.appendChild(mediaDiv_rev)
+gif = document.createElement("img")
+gif.src = '{{ heatmap_url }}'
+console.log('{{ heatmap_url }}');
+gif.style.width = "100%"
+gif.style.height = "100%"
+gif.style.objectFit = "inherit"
+gif.style.opacity = "0"; // turn opacity to 0 for the original
+
+gif_rev = document.createElement("img")
+gif_rev.src = '{{ heatmap_rev_url }}'
+console.log('{{ heatmap_rev_url }}');
+gif_rev.style.width = "100%"
+gif_rev.style.height = "100%"
+gif_rev.style.objectFit = "inherit"
+
+// Calculate position releative to the viewport and apply it to the wrapper div
+repositionElement = function() {
+dimensions = viewer.world.getItemAt(0).source.dimensions;
+    console.log("dim x", dimensions.x);
+ rect = new OpenSeadragon.Rect(0, 0, dimensions.x, dimensions.y)
+   newRect = viewer.viewport.viewportToViewerElementRectangle(
+    viewer.viewport.imageToViewportRectangle(rect)
+  )
+  
+console.log("newrect",newRect);
+  mediaDiv.style.left = newRect.x + "px"
+  mediaDiv.style.top = newRect.y + "px"
+  mediaDiv.style.width = newRect.width + "px"
+  mediaDiv.style.height = newRect.height + "px"
+  
+  mediaDiv_rev.style.left = newRect.x + "px"
+  mediaDiv_rev.style.top = newRect.y + "px"
+  mediaDiv_rev.style.width = newRect.width + "px"
+  mediaDiv_rev.style.height = newRect.height + "px"
+}
+
+// These handle repositioning the element when interacting with the viewer
+
+
+
+viewer.addHandler("open", repositionElement)
+
+mediaDiv.appendChild(gif)
+mediaDiv_rev.appendChild(gif_rev)
+
+slider.addEventListener("input", function() {
+  
+     opacity = sliderValue.textContent * 0.01;
+     gif.style.opacity = opacity.toString();
+     
+     });
+
+slider_rev.addEventListener("input", function() {
+  
+     opacity_rev = sliderValue_rev.textContent * 0.01;
+     gif_rev.style.opacity = opacity_rev.toString();
+     
+     });
+
+viewer.addHandler("animation", repositionElement)
+
+
+    new OpenSeadragon.MouseTracker({
+    element: viewer.element,
+    pressHandler: function(event) {
+      if (!selectionMode) {
+        return;
+      }
+      
+      var overlayElement = document.createElement('div');
+      switch(mode){
+      case 0:
+      	overlayElement.style.background = 'rgba(200, 200, 200, 0.8)'; 
+      	break;
+      case -1:
+      	overlayElement.style.background = 'rgba(255 ,105 ,180, 0.8)'; 
+      	break;
+      case -2:
+      	overlayElement.style.background = 'rgba(255, 0, 0, 0.8)'; 
+      	break;
+      case 1:
+      	overlayElement.style.background = 'rgba(8, 143, 143, 0.8)'; 
+      	break;
+      case 2:
+      	overlayElement.style.background = 'rgba(0, 0, 255, 0.8)'; 
+      	break;
+      }
+
+      overlayElement.style.border = "thick solid black";
+      var viewportPos = viewer.viewport.pointFromPixel(event.position);
+      viewer.addOverlay(overlayElement, new OpenSeadragon.Rect(viewportPos.x, viewportPos.y, 0, 0));
+      overlay_list.push(viewer.getOverlayById(overlayElement));
+      overlay_element.push(overlayElement);
+      console.log("overlay ele",overlayElement);
+
+      drag = {
+        overlayElement: overlayElement, 
+        startPos: viewportPos
+      };
+    },
+    dragHandler: function(event) {
+      if (!drag) {
+        return;
+      }
+     
+      var viewportPos = viewer.viewport.pointFromPixel(event.position);
+
+      var diffX = viewportPos.x - drag.startPos.x;
+      var diffY = viewportPos.y - drag.startPos.y;
+      var location = new OpenSeadragon.Rect(
+        Math.min(drag.startPos.x, drag.startPos.x + diffX), 
+        Math.min(drag.startPos.y, drag.startPos.y + diffY), 
+        Math.abs(diffX), 
+        Math.abs(diffY),
+
+     );
+      
+      var tiledImage = viewer.world.getItemAt(0); 
+      
+      viewer.updateOverlay(drag.overlayElement, location);
+      var imageBounds = tiledImage.viewportToImageRectangle(location);
+      actual_location = location;
+      x_box = imageBounds.x;
+      y_box = imageBounds.y;
+      h_box = imageBounds.height;
+      w_box = imageBounds.width;
+    },
+    releaseHandler: function(event) {      
+      drag = null;
+      selectionMode = false;
+      viewer.setMouseNavEnabled(true);
+      rect_id = arr.length + 100;
+      arr.push([flip_status,mode,rect_id,time+previous_time,x_box,y_box,w_box,h_box,actual_location.x,actual_location.y,actual_location.width,actual_location.height]);
+      console.log("array",arr);
+      console.log("seconds",time);
+      console.log("actual_location", actual_location);
+      console.log("location values",actual_location.x,actual_location.y,actual_location.width,actual_location.height);
+      actual_location_arr.push(actual_location);
+      }
+});
+
+document.getElementById('button').addEventListener('click', function() {
+  selectionMode = true;
+  mode = -2;
+  viewer.setMouseNavEnabled(false);
+});
+
+document.getElementById('button1').addEventListener('click', function() {
+  selectionMode = true;
+  mode = -1;
+  viewer.setMouseNavEnabled(false);
+});
+
+document.getElementById('button2').addEventListener('click', function() {
+  selectionMode = true;
+  mode = 1;
+  viewer.setMouseNavEnabled(false);
+});
+
+document.getElementById('button3').addEventListener('click', function() {
+  selectionMode = true;
+  mode = 0;
+  viewer.setMouseNavEnabled(false);
+});
+
+document.getElementById('button5').addEventListener('click', function() {
+  selectionMode = true;
+  mode = 2;
+  viewer.setMouseNavEnabled(false);
+});
+
+$("#remove-overlay-btn").click(function(){
+var num_overlays = overlay_list.length;
+console.log("before overlay_list ele", overlay_element);
+var_length = overlay_element.length;
+viewer.removeOverlay(overlay_element[var_length-1]);
+if(arr.length > 1){
+popped_rect = arr.pop();
+removed_arr.push(popped_rect);
+popped = overlay_element.pop();
+popped_list = overlay_list.pop();
+actual_popped = actual_location_arr.pop();
+console.log("after overlay_list ele", overlay_element);
+console.log("popped ID", popped);
+console.log("popped list", popped_list);
+console.log("actual_popped", actual_popped);
+}
+});
+
+
+$("#add-overlay-btn").click(function(){
+new_array = {{ meta_arr }};
+console.log({{meta_arr}});
+if(new_array != 0){
+console.log(new_array);
+      for (var i = 0; i < new_array.length; i++) { 
+      var overlayElement = document.createElement('div');
+      switch(new_array[i][1]){
+      case 0:
+      	overlayElement.style.background = 'rgba(200, 200, 200, 0.8)'; 
+      	break;
+      case -1:
+      	overlayElement.style.background = 'rgba(255 ,105 ,180, 0.8)'; 
+      	break;
+      case -2:
+      	overlayElement.style.background = 'rgba(255, 0, 0, 0.8)'; 
+      	break;
+      case 1:
+      	overlayElement.style.background = 'rgba(8, 143, 143, 0.8)'; 
+      	break;
+      case 2:
+      	overlayElement.style.background = 'rgba(0, 0, 255, 0.8)'; 
+      	break;
+      }
+      overlayElement.style.border = "thick solid black";
+    console.log(new_array[i][8],new_array[i][9],new_array[i][10],new_array[i][11]);
+      var location = new OpenSeadragon.Rect(new_array[i][8],new_array[i][9],new_array[i][10],new_array[i][11]);
+      console.log(location);
+viewer.addOverlay(overlayElement, location);}}
+$(this).prop("disabled", true);
+ $(this).addClass("disabled");
+});
+
+$("#clear-overlay-btn").click(function(){
+viewer.clearOverlays();
+});
+
+
+
+ function arrayToCsv(data){
+  return data.map(row =>
+    row
+    .map(String)  // convert every value to String
+    .join(',')  // comma-separated
+  ).join('\r\n');  // rows starting on new lines
+}
+
+function downloadBlob(content, filename, contentType) {
+  // Create a blob
+  var blob = new Blob([content], { type: contentType });
+  var url = URL.createObjectURL(blob);
+
+  // Create a link to download it
+  var pom = document.createElement('a');
+  pom.href = url;
+  pom.setAttribute('download', filename);
+  pom.click();
+}
+
+
+
+$("#geoJump").click(function(){
+let csv = arrayToCsv(arr);
+file_path = '{{ slide_filename }}';
+file_path = file_path.slice(0,-4) + '_annotation.csv';
+downloadBlob(csv, file_path, 'text/csv;charset=utf-8;');
+clearInterval(Interval);
+$("#back-btn").trigger('click');
+});
+
+
+
+$("#flip").click(function(){
+flip_status = 1;
+console.log("flip_status",flip_status);
+ $("#flip_orig").prop("disabled", false);
+ $("#flip_orig").removeClass("disabled");
+ $(this).prop("disabled", true);
+ $(this).addClass("disabled");
+});
+
+$("#flip_orig").click(function(){
+flip_status = 0;
+console.log("flip_status",flip_status);
+$("#flip").prop("disabled", false);
+ $("#flip").removeClass("disabled");
+ $(this).prop("disabled", true);
+ $(this).addClass("disabled");
+});
+
+
+$("#button-start").click(function(){
+Interval = setInterval(startTimer, 10);
+});
+
+
+$("#button-stop").click(function(){
+clearInterval(Interval);
+});
+
+$("#button-reset").click(function(){
+clearInterval(Interval);
+    tens = "00";
+  	seconds = "00";
+    appendTens.innerHTML = tens;
+  	appendSeconds.innerHTML = seconds;
+  	time = 0;
+});
+
+$("#flip").trigger('click'); 
+  
+});
+</script>
