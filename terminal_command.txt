@@ -1,0 +1,3 @@
+python main_twoclass_feed_search.py --drop_out --early_stopping --max_epochs 60  --k 10 --label_frac 1.0 --exp_code task_2_tumor_subtyping_CLAM_50 --weighted_sample --bag_loss ce --inst_loss svm --task task_2_tumor_subtyping --model_type clam_mb --log_data --data_root_dir /home/namithaguruprasad/CLAM/
+
+
