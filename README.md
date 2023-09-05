@@ -90,7 +90,7 @@ python create_splits_seq.py --task task_2_tumor_subtyping  --k 10
    * Running on http://xxx.x.x.x:xxxx
    #local host address is not xxx.x.x.x:xxxx, it is subjective to your machine's sockets, ports and addresses
    ```
-   Copy the address to any of your web browser and select any slide to annotate (as shown below in Fig <b>C</b>).
+   Copy the address to any of your web browser and select any slide to annotate. An example of a slide being annotated is shown in Fig <b>C</b>.
 
    <img src="8.png"  align="center">
    <sup>
@@ -101,7 +101,7 @@ python create_splits_seq.py --task task_2_tumor_subtyping  --k 10
          <i>NOTE</i>: The bounding boxes in C are drawn by the author, who is not a clinical expert. Different coloured boxes are for illustrative purposes only.
   </sup>
 
-   The annotations from the GUI will be stored in your local drive in the following format as a CSV file
+   The annotations from the GUI will be stored in your local drive as a CSV file which can be as follows:
    
    | <b>flip</b> | <b>mode</b> | <b>rect_id</b> | <b>time_taken</b> | <b>x</b> | <b>y</b> | <b>width</b> | <b>height</b> | <b>actual_x</b> | <b>actual_y</b> | <b>actual_width</b> | <b>actual_height</b> | 
    | :---:   | :---: | :---:   | :---: | :---:   | :---: | :---:   | :---: | :---:   | :---: | :---:   | :---: | 
@@ -142,7 +142,7 @@ python create_splits_seq.py --task task_2_tumor_subtyping  --k 10
    | : | : |
    | coord_x_n | coord_y_n | z_n |
 
-      After correcting the initial WSI heatmap by the pathologist, this representation (<b>expected scores</b>) works as a diagnostic attention map according to the clinician’s standards. In other words, the heatmap of a WSI generated from vanilla attention-models, combined with the corrections, serves as a universal model-independent representation of that WSI. 
+      After correcting the initial WSI heatmap by the pathologist, t his representation (<b>expected scores</b>) works as a diagnostic attention map according to the clinician’s standards. In other words, the heatmap of a WSI generated from vanilla attention-models, combined with the corrections, serves as a universal model-independent representation of that WSI. 
 
 7. The interpolation is clipped between the values 0 and 1 to ensure coherence and store the patch coordinates and the new attention scores after interpolation (<b>expected scores</b>) in a CSV file. We incorporate the feedback for every WSI into the model’s learning process through a least squares error correction (MSE loss) to penalize the difference between the <b>expected scores</b> and the model’s generated attention scores during the learning process (<i>current scores</i>). 
    
