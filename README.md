@@ -12,6 +12,9 @@ To address this, we propose an interactive approach with a human in the middle b
 
 Furthermore, we analyzed the generated heatmaps and observed how additional supervision from a domain expert enhanced the learning capacity of the models. We notice an improvement in cosine similarity between the pathologist’s GUI-based attention scores and trained models’ attention maps after feedback - 5% and 10% increase for CLAM and TransMIL, respectively. Our adaptive, interactive system harmonizes attention scores with expert intuition and instills higher confidence in the system’s predictions. This study establishes a potent synergy between AI and expert collaboration, addressing the constraints of weak supervision by enhancing the discrimination of diagnostic features and making an effort to generate predictions according to clinical diagnostic norms.
 
+### Dataset
+Awaiting clinical verification for de-identification
+
 ### Installation Guide
 
 We perform experiments on a consumer-grade workstation equipped with the NVIDIA GeForce 3090 GPU. 
